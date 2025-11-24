@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automobile Negotiation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-tabs button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .nav-tabs button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .nav-tabs button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .card-body {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #333;
+            text-align: right;
+            flex: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge.in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.out-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge.excellent {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .price {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #28a745;
+            margin: 10px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .search-box button:hover {
+            background: #764ba2;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn:hover {
+            background: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tabs button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 Automobile Negotiation Platform</h1>
+            <p class="subtitle">Real-time Vehicles, Clients & Negotiations Dashboard</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('vehicles')">Vehicles</button>
+            <button class="tab-btn" onclick="switchTab('clients')">Clients</button>
+            <button class="tab-btn" onclick="switchTab('negotiations')">Negotiations</button>
+            <button class="tab-btn" onclick="switchTab('offers')">Offers</button>
+            <button class="tab-btn" onclick="switchTab('stats')">Statistics</button>
+        </div>
+
+        <!-- Vehicles Section -->
+        <div id="vehicles" class="content-section active">
+            <button class="refresh-btn" onclick="loadVehicles()">🔄 Refresh Vehicles</button>
+            <div id="vehicles-container" class="grid">
+                <div class="loading">Loading vehicles...</div>
+            </div>
+        </div>
+
+        <!-- Clients Section -->
+        <div id="clients" class="content-section">
+            <button class="refresh-btn" onclick="loadClients()">🔄 Refresh Clients</button>
+            <div id="clients-container" class="grid">
+                <div class="loading">Loading clients...</div>
+            </div>
+        </div>
+
+        <!-- Negotiations Section -->
+        <div id="negotiations" class="content-section">
+            <button class="refresh-btn" onclick="loadNegotiations()">🔄 Refresh Negotiations</button>
+            <div id="negotiations-container">
+                <div class="loading">Loading negotiations...</div>
+            </div>
+        </div>
+
+        <!-- Offers Section -->
+        <div id="offers" class="content-section">
+            <button class="refresh-btn" onclick="loadOffers()">🔄 Refresh Offers</button>
+            <div id="offers-container" class="grid">
+                <div class="loading">Loading offers...</div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div id="stats" class="content-section">
+            <button class="refresh-btn" onclick="loadStats()">🔄 Refresh Statistics</button>
+            <div id="stats-container">
+                <div class="loading">Loading statistics...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        const CORS_HEADERS = {
+            'Content-Type': 'application/json',
+        };
+
+        function switchTab(tabName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active from buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data
+            switch(tabName) {
+                case 'vehicles': loadVehicles(); break;
+                case 'clients': loadClients(); break;
+                case 'negotiations': loadNegotiations(); break;
+                case 'offers': loadOffers(); break;
+                case 'stats': loadStats(); break;
+            }
+        }
+
+        async function fetchAPI(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'GET',
+                    headers: CORS_HEADERS,
+                    mode: 'cors',
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return null;
+            }
+        }
+
+        async function loadVehicles() {
+            const data = await fetchAPI('/vehicles/');
+            const container = document.getElementById('vehicles-container');
+
+            if (!data) {
+                container.innerHTML = '<div class="error">Failed to load vehicles</div>';
+                return;
+            }
+
+            const vehicles = data.results || data;
+            if (vehicles.length === 0) {
+                container.innerHTML = '<div class="error">No vehicles found</div>';
+                return;
+            }
+
+            container.innerHTML = vehicles.map(v => `
+                <div class="card">
+                    <h3>${v.year} ${v.make} ${v.model}</h3>
+                    <div class="card-body">
+                        <div class="price">€${parseFloat(v.estimated_value).toLocaleString()}</div>
+                        <div class="info-row">
+                            <span class="info-label">VIN:</span>
+                            <span class="info-value">${v.vin.slice(-6)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Mileage:</span>
+                            <span class="info-value">${v.mileage?.toLocaleString() || 'N/A'} km</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Fuel:</span>
+                            <span class="info-value">${v.fuel_type}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Condition:</span>
+                            <span class="info-value"><span class="badge excellent">${v.condition_rating}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value">
+                                <span class="badge ${v.in_stock ? 'in-stock' : 'out-stock'}">
+                                    ${v.in_stock ? 'In Stock' : 'Reserved'}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Power:</span>
+                            <span class="info-value">${v.power_kw} kW</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadClients() {
+            const data = await fetchAPI('/clients/');
+            const container = document.getElementById('clients-container');
+
+            if (!data) {
+                container.innerHTML = '<div class="error">Failed to load clients</div>';
+                return;
+            }
+
+            const clients = data.results || data;
+            if (clients.length === 0) {
+                container.innerHTML = '<div class="error">No clients found</div>';
+                return;
+            }
+
+            container.innerHTML = clients.map(c => `
+                <div class="card">
+                    <h3>${c.first_name} ${c.last_name}</h3>
+                    <div class="card-body">
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">${c.email}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value">${c.phone || 'N/A'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Budget:</span>
+                            <span class="info-value">€${c.budget_min?.toLocaleString() || '0'} - €${c.budget_max?.toLocaleString() || '0'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Preferred Fuel:</span>
+                            <span class="info-value">${c.preferred_fuel_type || 'Any'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Preferred Transmission:</span>
+                            <span class="info-value">${c.preferred_transmission || 'Any'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Loyalty Score:</span>
+                            <span class="info-value">${c.loyalty_score || 0}/100</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Risk Score:</span>
+                            <span class="info-value">${c.risk_score || 0}/100</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Subscription Interest:</span>
+                            <span class="info-value">${c.interested_in_subscription ? 'Yes' : 'No'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadNegotiations() {
+            const data = await fetchAPI('/negotiations/');
+            const container = document.getElementById('negotiations-container');
+
+            if (!data) {
+                container.innerHTML = '<div class="error">Failed to load negotiations</div>';
+                return;
+            }
+
+            const negotiations = data.results || data;
+            if (negotiations.length === 0) {
+                container.innerHTML = '<div class="success">No active negotiations yet</div>';
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Rounds</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            negotiations.forEach(n => {
+                html += `
+                    <tr>
+                        <td>#${n.id}</td>
+                        <td>${n.client_details?.first_name || 'N/A'} ${n.client_details?.last_name || ''}</td>
+                        <td>${n.negotiation_type || 'Standard'}</td>
+                        <td><span class="badge">${n.status}</span></td>
+                        <td>${n.current_round || 0}/10</td>
+                        <td>${new Date(n.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        async function loadOffers() {
+            const data = await fetchAPI('/offers/');
+            const container = document.getElementById('offers-container');
+
+            if (!data) {
+                container.innerHTML = '<div class="error">Failed to load offers</div>';
+                return;
+            }
+
+            const offers = data.results || data;
+            if (offers.length === 0) {
+                container.innerHTML = '<div class="success">No offers yet</div>';
+                return;
+            }
+
+            container.innerHTML = offers.map(o => `
+                <div class="card">
+                    <h3>Offer #${o.id} - ${o.offer_type}</h3>
+                    <div class="card-body">
+                        <div class="price">€${parseFloat(o.proposed_price || 0).toLocaleString()}</div>
+                        <div class="info-row">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value"><span class="badge">${o.status}</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Type:</span>
+                            <span class="info-value">${o.offer_type}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Trade-in Value:</span>
+                            <span class="info-value">€${parseFloat(o.trade_in_value || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Monthly Payment:</span>
+                            <span class="info-value">${o.monthly_payment ? '€' + parseFloat(o.monthly_payment).toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Confidence:</span>
+                            <span class="info-value">${o.confidence_score ? Math.round(o.confidence_score * 100) + '%' : 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadStats() {
+            const container = document.getElementById('stats-container');
+
+            const vehiclesData = await fetchAPI('/vehicles/');
+            const clientsData = await fetchAPI('/clients/');
+            const negotiationsData = await fetchAPI('/negotiations/');
+            const offersData = await fetchAPI('/offers/');
+
+            const vehicles = vehiclesData?.results || vehiclesData || [];
+            const clients = clientsData?.results || clientsData || [];
+            const negotiations = negotiationsData?.results || negotiationsData || [];
+            const offers = offersData?.results || offersData || [];
+
+            const inStock = vehicles.filter(v => v.in_stock).length;
+            const avgValue = vehicles.length > 0 ? vehicles.reduce((sum, v) => sum + (parseFloat(v.estimated_value) || 0), 0) / vehicles.length : 0;
+            const activeNegotiations = negotiations.filter(n => n.status === 'in_progress').length;
+
+            container.innerHTML = `
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">${vehicles.length}</div>
+                        <div class="stat-label">Total Vehicles</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${inStock}</div>
+                        <div class="stat-label">In Stock</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">€${Math.round(avgValue).toLocaleString()}</div>
+                        <div class="stat-label">Average Value</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${clients.length}</div>
+                        <div class="stat-label">Total Clients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${negotiations.length}</div>
+                        <div class="stat-label">Total Negotiations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${activeNegotiations}</div>
+                        <div class="stat-label">Active Negotiations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${offers.length}</div>
+                        <div class="stat-label">Total Offers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${offers.filter(o => o.status === 'accepted').length}</div>
+                        <div class="stat-label">Accepted Offers</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load initial data
+        window.addEventListener('load', () => {
+            loadVehicles();
+        });
+    </script>
+</body>
+</html>

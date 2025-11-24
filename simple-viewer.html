@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quick API Viewer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .endpoints { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .endpoint { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .endpoint h2 { color: #667eea; margin-bottom: 10px; }
+        .endpoint button { background: #667eea; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: 100%; }
+        .endpoint button:hover { background: #764ba2; }
+        .result { margin-top: 15px; background: #f9f9f9; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+        .loading { color: #999; }
+        .error { color: #d32f2f; }
+        .success { color: #388e3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Automobile API Data Viewer</h1>
+        <div class="endpoints">
+            <div class="endpoint">
+                <h2>Vehicles</h2>
+                <button onclick="loadData('/api/vehicles/')">Load Vehicles</button>
+                <div id="vehicles-result" class="result"></div>
+            </div>
+            <div class="endpoint">
+                <h2>Clients</h2>
+                <button onclick="loadData('/api/clients/')">Load Clients</button>
+                <div id="clients-result" class="result"></div>
+            </div>
+            <div class="endpoint">
+                <h2>Negotiations</h2>
+                <button onclick="loadData('/api/negotiations/')">Load Negotiations</button>
+                <div id="negotiations-result" class="result"></div>
+            </div>
+            <div class="endpoint">
+                <h2>Offers</h2>
+                <button onclick="loadData('/api/offers/')">Load Offers</button>
+                <div id="offers-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadData(endpoint) {
+            const resultId = endpoint.split('/')[2] + '-result';
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = '<span class="loading">Loading...</span>';
+
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✓ Success</span><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">✗ Error: ' + error.message + '</span>';
+            }
+        }
+    </script>
+</body>
+</html>
